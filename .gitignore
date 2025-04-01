@@ -1,0 +1,54 @@
+### Common ###
+.DS_Store
+.env
+.env.*
+!.env.example
+
+### Secrets ###
+secrets/
+.api_keys
+*.key
+*.pem
+*.cert
+
+### Python ###
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+poetry.lock
+.pytest_cache/
+
+### Go ###
+/bin/
+*.exe
+*.dll
+*.so
+*.dylib
+/vendor/
+*.test
+*.out
+go.work
+go.work.sum
+
+# Proto Generated
+*_pb2.py
+*_pb2_grpc.py
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+### Logs ###
+*.log
+logs/
+
+### Data ###
+/backend/python/data/
+/backend/golang/data/
+
+### MySQL ###
+mysql/data/*
+!mysql/data/.gitkeep
