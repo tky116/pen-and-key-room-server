@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+option csharp_namespace = "VRAcademyAudition";
+
+package vracademyaudition;
+
+// ヘルスチェックリクエスト
+message HealthCheckRequest {
+    // 空のリクエスト
+    // 今後、client_idなどの認証情報が必要な場合はここに追加
+    // 例：
+    //  UnityのSystemInfo.deviceUniqueIdentifier
+    //  MetaQuestのデバイスID
+    //  カスタムの識別子生成システム
+}
+
+// ヘルスチェックレスポンス
+message HealthCheckResponse {
+    enum ServingStatus {
+        UNKNOWN = 0;        // 不明な状態
+        SERVING = 1;        // サービス中
+        NOT_SERVING = 2;    // サービス停止中
+    }
+    ServingStatus status = 1;   // サービスの状態
+    string message = 2;        // エラーメッセージなど
+}
+
+// 色情報の定義（0-1の範囲）
+message Color {
+    float r = 1;
+    float g = 2;
+    float b = 3;
+    float a = 4;  // アルファ値（透明度）
+}
+
+// 3次元ベクトルの定義
+message Vector3Proto {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+// 線データの定義
+message Line {
+    repeated Vector3Proto positions = 1;  // LineRenderer.GetPositions()
+    float width = 2;                      // 線の太さ
+    Color color = 3;                      // 線の色
+}
+
+// クライアント情報の定義
+message ClientInfo {
+    enum ClientType {
+        UNKNOWN = 0;
+        DEVELOPMENT = 1;    // 開発環境
+        PRODUCTION = 2;     // 本番環境
+    }
+    ClientType type = 1;
+    string device_id = 2;           // デバイス固有ID
+    string device_name = 3;         // デバイス名
+    string system_info = 4;         // システム情報
+    string app_version = 5;         // アプリケーションバージョン
+}
+
+// 描画データの定義
+message DrawingData {
+    string drawing_id = 1;              // 一意識別子
+    string scene_id = 2;                // シーンID
+    int64 draw_timestamp = 3;           // 描画タイムスタンプ(UNIX時間)
+    repeated Line draw_lines = 4;       // 複数のLineRendererデータ
+    Vector3Proto center = 5;            // 描画全体の中心点    
+    bool use_ai = 6;                    // AIによる処理を行うかどうか
+    string client_id = 7;               // クライアントID
+    ClientInfo client_info = 8;         // クライアント情報
+    map<string, string> metadata = 9;   // メタデータ
+}
+
+
+// アップロード結果を表すメッセージ
+message UploadResponse {
+    bool success = 1;        // アップロード成功フラグ
+    string message = 2;      // メッセージ（エラー時はエラー内容）
+    string upload_id = 3;    // アップロードされたデータの識別子
+}
+
+// AI判定結果を表すメッセージ（クライアント）
+message ShapeRecognitionClient {
+    bool success = 1;         // 処理成功フラグ
+    string drawing_id= 2;       // 描画データID
+    string prefab_name = 3;     // 生成するプレハブ名
+    string error_message = 4;   // エラーメッセージ
+}
+
+// AI判定結果を表すメッセージ（サーバー）
+message ShapeRecognitionServer {
+    string result_id = 1;       // 結果ID
+    string drawing_id = 2;      // 描画データID
+    string scene_id = 3;        // シーンID
+    string shape_id = 4;        // 形状ID
+    string prefab_name = 5;     // プレハブ名
+    bool success = 6;           // 処理成功フラグ
+    int32 score = 7;            // 信頼度スコア
+    string reasoning = 8;       // AI判定の理由
+    int32 process_time_ms = 9;  // 処理時間（ミリ秒）
+    string model_name = 10;     // 利用したモデル名
+    string api_response = 11;   // APIのレスポンス
+    string error_message = 12;  // エラーメッセージ
+    string client_id = 13;      // クライアントID
+}
+
+// サービス定義
+service DrawingService {
+    // ヘルスチェック用
+    rpc CheckHealth (HealthCheckRequest) returns (HealthCheckResponse);
+    
+    // データのアップロード用
+    rpc UploadDrawing (DrawingData) returns (UploadResponse);
+
+    // 描画データを処理してAI判定結果を返す
+    rpc ProcessDrawing (DrawingData) returns (ShapeRecognitionClient);
+}

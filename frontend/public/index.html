@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>3D Drawing Viewer</title>
+    <link rel="stylesheet" href="../src/css/style.css">
+</head>
+<body>
+    <div id="info">3D Drawing Viewer - 左ドラッグ:回転 / 右ドラッグ:移動 / ホイール:拡大縮小</div>
+    <div class="control-panel">
+        <select id="drawing-select" onChange="loadSelectedDrawing()">
+            <option value="">Loading drawings...</option>
+        </select>
+        <button onclick="resetView()">Reset View</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="../src/js/viewer.js"></script>
+</body>
+</html>
